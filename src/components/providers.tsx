@@ -1,11 +1,8 @@
 "use client";
-
-import { Provider } from "react-redux";
+import { useState } from "react";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { store } from "@/lib/store";
 import { MUIThemeProvider } from "./mui-theme-provider";
 import { SnackbarProvider } from "./snackbar-provider";
-import { useState } from "react";
 
 export function Providers({ children }: { children: React.ReactNode }) {
   const [queryClient] = useState(
@@ -21,12 +18,10 @@ export function Providers({ children }: { children: React.ReactNode }) {
   );
 
   return (
-    <Provider store={store}>
-      <QueryClientProvider client={queryClient}>
-        <MUIThemeProvider>
-          <SnackbarProvider>{children}</SnackbarProvider>
-        </MUIThemeProvider>
-      </QueryClientProvider>
-    </Provider>
+    <QueryClientProvider client={queryClient}>
+      <MUIThemeProvider>
+        <SnackbarProvider>{children}</SnackbarProvider>
+      </MUIThemeProvider>
+    </QueryClientProvider>
   );
 }

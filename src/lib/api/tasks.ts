@@ -10,9 +10,20 @@ export interface ApiTask {
 }
 
 export const tasksApi = {
-  getAllTasks: async (): Promise<ApiTask[]> => {
-    const response = await fetch(`${API_BASE_URL}/tasks`);
-    if (!response.ok) throw new Error("Failed to fetch tasks");
+  getAllTasks: async (search?: string): Promise<ApiTask[]> => {
+    const url = new URL(`${API_BASE_URL}/tasks`);
+    if (search) {
+      url.searchParams.append("search", search);
+    }
+
+    const response = await fetch(url.toString());
+    if (!response.ok) {
+      if (response.status === 404) {
+        console.log("404 04040 404");
+        return [];
+      }
+      throw new Error("Failed to fetch tasks");
+    }
     return response.json();
   },
 

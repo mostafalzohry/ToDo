@@ -1,5 +1,6 @@
 "use client";
 
+import { Task } from "@/lib/types/task";
 import {
   Dialog,
   DialogTitle,
@@ -10,7 +11,6 @@ import {
   MenuItem,
 } from "@mui/material";
 import { useState, useEffect } from "react";
-import type { Task } from "@/lib/features/tasks/tasksSlice";
 
 interface TaskFormDialogProps {
   open: boolean;

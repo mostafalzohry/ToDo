@@ -1,10 +1,9 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { useAppDispatch } from "@/lib/hooks";
-import { setTasks } from "@/lib/features/tasks/tasksSlice";
 import { tasksApi, type ApiTask } from "@/lib/api/tasks";
-import { useEffect } from "react";
-import type { Task } from "@/lib/features/tasks/tasksSlice";
+import { useState } from "react";
 import { useSnackbarContext } from "@/components/snackbar-provider";
+import { useDebounce } from "./use-debounce";
+import { Task } from "../types/task";
 
 const mapApiTaskToTask = (apiTask: ApiTask): Task => ({
   id: apiTask.id,
@@ -15,21 +14,15 @@ const mapApiTaskToTask = (apiTask: ApiTask): Task => ({
 });
 
 export const useTasks = () => {
-  const dispatch = useAppDispatch();
   const queryClient = useQueryClient();
   const { showSuccess, showError } = useSnackbarContext();
+  const [searchQuery, setSearchQuery] = useState("");
+  const debouncedSearchQuery = useDebounce(searchQuery, 600); // 300ms delay
 
   const tasksQuery = useQuery({
-    queryKey: ["tasks"],
-    queryFn: tasksApi.getAllTasks,
+    queryKey: ["tasks", debouncedSearchQuery],
+    queryFn: () => tasksApi.getAllTasks(debouncedSearchQuery),
   });
-
-  useEffect(() => {
-    if (tasksQuery.data) {
-      const mappedTasks = tasksQuery.data.map(mapApiTaskToTask);
-      dispatch(setTasks(mappedTasks));
-    }
-  }, [tasksQuery.data, dispatch]);
 
   const createTaskMutation = useMutation({
     mutationFn: tasksApi.createTask,
@@ -66,9 +59,12 @@ export const useTasks = () => {
   });
 
   return {
+    tasks: tasksQuery.data ? tasksQuery.data.map(mapApiTaskToTask) : [],
     isLoading: tasksQuery.isLoading,
     isError: tasksQuery.isError,
     error: tasksQuery.error,
+    searchQuery,
+    setSearchQuery,
     createTask: createTaskMutation.mutate,
     updateTask: updateTaskMutation.mutate,
     deleteTask: deleteTaskMutation.mutate,

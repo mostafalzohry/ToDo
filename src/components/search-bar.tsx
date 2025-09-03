@@ -1,23 +1,41 @@
-"use client";
+import { TextField, Box, IconButton, InputAdornment } from "@mui/material";
+import { Search, Clear } from "@mui/icons-material";
 
-import { TextField, Box } from "@mui/material";
-import { Search } from "@mui/icons-material";
-import { useAppDispatch, useAppSelector } from "@/lib/hooks";
-import { setSearchQuery } from "@/lib/features/tasks/tasksSlice";
+interface SearchBarProps {
+  searchQuery: string;
+  onSearchChange: (query: string) => void;
+}
 
-export function SearchBar() {
-  const dispatch = useAppDispatch();
-  const searchQuery = useAppSelector((state) => state.tasks.searchQuery);
+export function SearchBar({ searchQuery, onSearchChange }: SearchBarProps) {
+  const handleClear = () => {
+    onSearchChange("");
+  };
 
   return (
-    <Box sx={{ width: "100%", maxWidth: 400 }}>
+    <Box sx={{ width: "100%", maxWidth: 400, position: "relative" }}>
       <TextField
         fullWidth
         placeholder="Search by task title or description"
         value={searchQuery}
-        onChange={(e) => dispatch(setSearchQuery(e.target.value))}
+        onChange={(e) => onSearchChange(e.target.value)}
         InputProps={{
-          startAdornment: <Search sx={{ color: "text.secondary", mr: 1 }} />,
+          startAdornment: (
+            <InputAdornment position="start">
+              <Search sx={{ color: "text.secondary" }} />
+            </InputAdornment>
+          ),
+          endAdornment: searchQuery && (
+            <InputAdornment position="end">
+              <IconButton
+                aria-label="clear search"
+                onClick={handleClear}
+                edge="end"
+                size="small"
+              >
+                <Clear />
+              </IconButton>
+            </InputAdornment>
+          ),
         }}
         sx={{
           "& .MuiOutlinedInput-root": {

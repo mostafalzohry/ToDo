@@ -2,9 +2,9 @@
 
 import { Card, CardContent, Typography, IconButton, Box } from "@mui/material";
 import { Edit, Delete } from "@mui/icons-material";
-import type { Task } from "@/lib/features/tasks/tasksSlice";
 import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
+import { Task } from "@/lib/types/task";
 
 interface TaskCardProps {
   task: Task;

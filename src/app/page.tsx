@@ -7,12 +7,22 @@ import { SearchBar } from "@/components/search-bar";
 import { KanbanBoard } from "@/components/kanban-board";
 import { TaskFormDialog } from "@/components/task-form-dialog";
 import { useTasks } from "@/lib/hooks/use-tasks";
-import type { Task } from "@/lib/features/tasks/tasksSlice";
 import { DeleteTaskDialog } from "@/components/delete-task-dialog";
 import { Loading } from "@/components/loading";
+import { NoResults } from "@/components/no-results";
+import { Task } from "@/lib/types/task";
 
 export default function HomePage() {
-  const { isLoading, createTask, updateTask, deleteTask } = useTasks();
+  const {
+    tasks,
+    isLoading,
+    searchQuery,
+    setSearchQuery,
+    createTask,
+    updateTask,
+    deleteTask,
+  } = useTasks();
+
   const [dialogOpen, setDialogOpen] = useState(false);
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [editingTask, setEditingTask] = useState<Task | null>(null);
@@ -53,6 +63,10 @@ export default function HomePage() {
     }
   };
 
+  const handleClearSearch = () => {
+    setSearchQuery("");
+  };
+
   if (isLoading) {
     return <Loading message="Loading tasks..." />;
   }
@@ -83,14 +97,22 @@ export default function HomePage() {
       </Box>
 
       <Box sx={{ p: 3, pb: 0 }}>
-        <SearchBar />
+        <SearchBar searchQuery={searchQuery} onSearchChange={setSearchQuery} />
       </Box>
 
-      <KanbanBoard
-        onAddTask={handleAddTask}
-        onEditTask={handleEditTask}
-        onDeleteTask={handleDeleteTask}
-      />
+      {searchQuery && tasks.length === 0 ? (
+        <NoResults
+          searchQuery={searchQuery}
+          onClearSearch={handleClearSearch}
+        />
+      ) : (
+        <KanbanBoard
+          tasks={tasks}
+          onAddTask={handleAddTask}
+          onEditTask={handleEditTask}
+          onDeleteTask={handleDeleteTask}
+        />
+      )}
 
       <TaskFormDialog
         open={dialogOpen}

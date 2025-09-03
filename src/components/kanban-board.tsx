@@ -2,8 +2,6 @@
 
 import { Box } from "@mui/material";
 import { KanbanColumn } from "./kanban-column";
-import { useAppSelector } from "@/lib/hooks";
-import type { Task } from "@/lib/features/tasks/tasksSlice";
 import {
   DndContext,
   DragEndEvent,
@@ -16,19 +14,21 @@ import {
 import { useTasks } from "@/lib/hooks/use-tasks";
 import { useState } from "react";
 import { TaskCard } from "./task-card";
+import { Task } from "@/lib/types/task";
 
 interface KanbanBoardProps {
+  tasks: Task[];
   onAddTask: (status: Task["status"]) => void;
   onEditTask: (task: Task) => void;
   onDeleteTask: (task: Task) => void;
 }
 
 export function KanbanBoard({
+  tasks,
   onAddTask,
   onEditTask,
   onDeleteTask,
 }: KanbanBoardProps) {
-  const { tasks } = useAppSelector((state) => state.tasks);
   const { updateTask } = useTasks();
   const [activeTask, setActiveTask] = useState<Task | null>(null);
 

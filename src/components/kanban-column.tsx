@@ -3,8 +3,8 @@
 import { Box, Typography, Button, Paper } from "@mui/material";
 import { Add } from "@mui/icons-material";
 import { TaskCard } from "./task-card";
-import type { Task } from "@/lib/features/tasks/tasksSlice";
 import { useDroppable } from "@dnd-kit/core";
+import { Task } from "@/lib/types/task";
 
 interface KanbanColumnProps {
   title: string;
