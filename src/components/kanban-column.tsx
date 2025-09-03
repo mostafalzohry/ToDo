@@ -4,6 +4,7 @@ import { Box, Typography, Button, Paper } from "@mui/material";
 import { Add } from "@mui/icons-material";
 import { TaskCard } from "./task-card";
 import type { Task } from "@/lib/features/tasks/tasksSlice";
+import { useDroppable } from "@dnd-kit/core";
 
 interface KanbanColumnProps {
   title: string;
@@ -22,15 +23,25 @@ export function KanbanColumn({
   onEditTask,
   onDeleteTask,
 }: KanbanColumnProps) {
+  const { setNodeRef, isOver } = useDroppable({
+    id: status,
+  });
+
   return (
     <Paper
+      ref={setNodeRef}
       sx={{
         p: 2,
-        minHeight: 500,
+        minHeight: 400,
         width: "100%",
-        backgroundColor: "background.default",
-        border: "1px solid",
-        borderColor: "divider",
+        backgroundColor: isOver ? "primary.50" : "background.default",
+        border: isOver ? 2 : 1,
+        borderColor: isOver ? "primary.300" : "divider",
+        borderStyle: isOver ? "dashed" : "solid",
+        borderRadius: 2,
+        transition: "all 0.2s ease-in-out",
+        transform: isOver ? "scale(1.01)" : "scale(1)",
+        boxShadow: isOver ? 2 : 1,
       }}
     >
       <Box
@@ -59,8 +70,8 @@ export function KanbanColumn({
           <TaskCard
             key={task.id}
             task={task}
-            onEdit={() => onEditTask(task)}
-            onDelete={() => onDeleteTask(task)}
+            onEdit={onEditTask}
+            onDelete={onDeleteTask}
           />
         ))}
       </Box>

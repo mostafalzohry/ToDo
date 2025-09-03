@@ -3,30 +3,58 @@
 import { Card, CardContent, Typography, IconButton, Box } from "@mui/material";
 import { Edit, Delete } from "@mui/icons-material";
 import type { Task } from "@/lib/features/tasks/tasksSlice";
+import { useSortable } from "@dnd-kit/sortable";
+import { CSS } from "@dnd-kit/utilities";
 
 interface TaskCardProps {
   task: Task;
   onEdit: (task: Task) => void;
-  onDelete: (id: string) => void;
+  onDelete: (task: Task) => void;
 }
 
 export function TaskCard({ task, onEdit, onDelete }: TaskCardProps) {
+  const {
+    attributes,
+    listeners,
+    setNodeRef,
+    transform,
+    transition,
+    isDragging,
+  } = useSortable({ id: task.id });
+
+  const style = {
+    transform: CSS.Transform.toString(transform),
+    transition: transition || "transform 0.2s ease, box-shadow 0.2s ease",
+    opacity: isDragging ? 0.6 : 1,
+    zIndex: isDragging ? 1 : 0,
+  };
+
   const handleEdit = () => {
     onEdit(task);
   };
 
   const handleDelete = () => {
-    onDelete(task.id);
+    onDelete(task);
   };
 
   return (
     <Card
+      ref={setNodeRef}
+      style={style}
+      {...attributes}
+      {...listeners}
       sx={{
         mb: 2,
-        cursor: "pointer",
+        cursor: isDragging ? "grabbing" : "grab",
+        transition: "all 0.2s ease-in-out",
         "&:hover": {
-          boxShadow: 2,
+          boxShadow: 3,
+          transform: isDragging ? "none" : "translateY(-2px)",
         },
+        ...(isDragging && {
+          boxShadow: 6,
+          transform: "rotate(3deg)",
+        }),
       }}
     >
       <CardContent sx={{ pb: 2 }}>

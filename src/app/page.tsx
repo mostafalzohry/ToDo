@@ -1,6 +1,6 @@
 "use client";
 
-import { Box, Typography, Button, CircularProgress } from "@mui/material";
+import { Box, Typography, Button } from "@mui/material";
 import { Add } from "@mui/icons-material";
 import { useState } from "react";
 import { SearchBar } from "@/components/search-bar";
@@ -9,6 +9,7 @@ import { TaskFormDialog } from "@/components/task-form-dialog";
 import { useTasks } from "@/lib/hooks/use-tasks";
 import type { Task } from "@/lib/features/tasks/tasksSlice";
 import { DeleteTaskDialog } from "@/components/delete-task-dialog";
+import { Loading } from "@/components/loading";
 
 export default function HomePage() {
   const { isLoading, createTask, updateTask, deleteTask } = useTasks();
@@ -53,19 +54,9 @@ export default function HomePage() {
   };
 
   if (isLoading) {
-    return (
-      <Box
-        sx={{
-          display: "flex",
-          justifyContent: "center",
-          alignItems: "center",
-          minHeight: "100vh",
-        }}
-      >
-        <CircularProgress />
-      </Box>
-    );
+    return <Loading message="Loading tasks..." />;
   }
+
   return (
     <Box sx={{ minHeight: "100vh", backgroundColor: "background.default" }}>
       <Box
