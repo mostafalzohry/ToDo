@@ -37,6 +37,11 @@ export function TaskCard({ task, onEdit, onDelete }: TaskCardProps) {
     onDelete(task);
   };
 
+  const formattedDate = new Date(task.createdAt).toLocaleString("en-US", {
+    dateStyle: "medium",
+    timeStyle: "short",
+  });
+
   return (
     <Card
       ref={setNodeRef}
@@ -69,8 +74,11 @@ export function TaskCard({ task, onEdit, onDelete }: TaskCardProps) {
             <Typography variant="subtitle1" fontWeight={600} gutterBottom>
               {task.title}
             </Typography>
-            <Typography variant="body2" color="text.secondary">
+            <Typography variant="body2" color="text.secondary" gutterBottom>
               {task.description}
+            </Typography>
+            <Typography variant="caption" color="text.disabled">
+              Created at: {formattedDate}
             </Typography>
           </Box>
 
